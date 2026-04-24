@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}Pay & Benefits{% endblock %}
+{% block breadcrumb %}Pay & Benefits{% endblock %}
+
+{% block extra_styles %}
+.pay-hero { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+
+.pay-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); padding: 24px 22px; box-shadow: var(--shadow-sm); }
+.pay-card.accent { border-top: 3px solid var(--blue); }
+.pay-lbl { font-size: 11px; color: var(--text-3); font-weight: 500; margin-bottom: 10px; }
+.pay-val { font-size: 28px; font-weight: 700; color: var(--text-1); letter-spacing: -0.5px; line-height: 1; }
+.pay-sub { font-size: 11.5px; color: var(--text-3); margin-top: 8px; }
+
+
+
+.compact-row { display: flex; align-items: flex-start; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 12px; gap: 16px; }
+.compact-row:last-child { border-bottom: none; }
+.compact-key { color: var(--text-2); font-weight: 500; flex-shrink: 0; }
+.compact-val { color: var(--text-1); text-align: right; font-weight: 500; }
+
+@media (max-width: 768px) {
+  .pay-hero { grid-template-columns: 1fr 1fr; }
+  .pay-val { font-size: 22px; }
+  .compact-row { flex-direction: column; gap: 2px; }
+  .compact-val { text-align: left; }
+}
+@media (max-width: 480px) {
+  .pay-hero { grid-template-columns: 1fr; }
+}
+{% endblock %}
+
+{% block content %}
+<div class="page">
+
+  <div class="title-row">
+    <div>
+      <div class="page-title">Pay & Benefits</div>
+      <div class="page-sub">{{ user.name }} · {{ user.title }} · {{ user.band }}</div>
+    </div>
+    <button class="btn btn-primary" onclick="askAbout('If I resign today how much gratuity will I get?')">Ask PolicyIQ →</button>
+  </div>
+
+  <!-- Hero pay cards — Sarah's actual numbers -->
+  <div class="pay-hero">
+    <div class="pay-card accent">
+      <div class="pay-lbl">Total Monthly Salary</div>
+      <div class="pay-val">AED {{ "{:,}".format(user.total_salary) }}</div>
+      <div style="margin-top:10px">
+        <span class="stat-pill pill-green" style="font-size:11px">● Paid monthly via WPS</span>
+      </div>
+      <div class="pay-sub" style="margin-top:6px">On or before last working day each month</div>
+    </div>
+    <div class="pay-card">
+      <div class="pay-lbl">Basic Salary</div>
+      <div class="pay-val">AED {{ "{:,}".format(user.basic_salary) }}</div>
+      <div class="pay-sub">EOSG calculated on this amount</div>
+    </div>
+    <div class="pay-card">
+      <div class="pay-lbl">Monthly Allowances</div>
+      <div class="pay-val">AED {{ "{:,}".format(user.allowances) }}</div>
+      <div class="pay-sub">Transport & housing contribution</div>
+    </div>
+    <div class="pay-card">
+      <div class="pay-lbl">Gratuity If Leaving Today</div>
+      <div class="pay-val" style="color:var(--green)">AED {% set g = (user.tenure_years * 21 * (user.basic_salary / 30))|int %}{{ "{:,}".format(g) }}</div>
+      <div class="pay-sub">Based on {{ user.tenure_years }} yrs · basic salary</div>
+    </div>
+  </div>
+
+
+
+  <!-- EOSG -->
+  <div class="card">
+    <div class="card-hdr">
+      <div class="card-title">End of Service Gratuity (EOSG)</div>
+      <span class="badge badge-purple">Your estimate: AED {% set g = (user.tenure_years * 21 * (user.basic_salary / 30))|int %}{{ "{:,}".format(g) }}</span>
+    </div>
+    <div class="card-body">
+      <div class="alert alert-blue" style="margin-bottom:14px">
+        💡 Based on your {{ user.tenure_years }} years of service and basic salary of AED {{ "{:,}".format(user.basic_salary) }}, your gratuity today would be <strong>AED {% set g = (user.tenure_years * 21 * (user.basic_salary / 30))|int %}{{ "{:,}".format(g) }}</strong>. This increases with every year you stay.
+      </div>
+      <div class="compact-row"><span class="compact-key">Your service to date</span><span class="compact-val">{{ user.tenure_years }} years (since {{ user.joining_date }})</span></div>
+      <div class="compact-row"><span class="compact-key">Calculation basis</span><span class="compact-val">21 days × basic salary ÷ 30 × years of service</span></div>
+      <div class="compact-row"><span class="compact-key">Your calculation</span><span class="compact-val">21 × ({{ "{:,}".format(user.basic_salary) }} ÷ 30) × {{ user.tenure_years }} = AED {% set g = (user.tenure_years * 21 * (user.basic_salary / 30))|int %}{{ "{:,}".format(g) }}</span></div>
+      <div class="compact-row"><span class="compact-key">After 5 years</span><span class="compact-val">Rate increases to 30 days per year of service</span></div>
+      <div class="compact-row"><span class="compact-key">Paid within</span><span class="compact-val">14 calendar days of your last working day</span></div>
+      <div class="compact-row"><span class="compact-key">On resignation</span><span class="compact-val">Full gratuity is payable — not forfeited</span></div>
+    </div>
+    <div style="padding:0 16px 14px">
+      <button class="btn-ghost" onclick="askAbout('How is my end of service gratuity calculated?')">Ask a question →</button>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <!-- Air ticket -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Air Ticket Allowance</div>
+        <span class="badge badge-green">AED {{ "{:,}".format(user.air_ticket_amount) }} · June</span>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-green" style="margin-bottom:12px">✓ &nbsp;You are eligible — you have completed over 1 year of service. Your AED {{ "{:,}".format(user.air_ticket_amount) }} allowance will be paid in June with your salary.</div>
+        <div class="compact-row"><span class="compact-key">Your allowance</span><span class="compact-val">AED {{ "{:,}".format(user.air_ticket_amount) }}</span></div>
+        <div class="compact-row"><span class="compact-key">Payment date</span><span class="compact-val">June — with monthly salary payroll</span></div>
+        <div class="compact-row"><span class="compact-key">Receipts required</span><span class="compact-val">No — paid unconditionally</span></div>
+      </div>
+      <div style="padding:0 16px 14px">
+        <button class="btn-ghost" style="width:100%;justify-content:center" onclick="askAbout('When will I receive my air ticket allowance?')">Ask a question →</button>
+      </div>
+    </div>
+
+    <!-- Health insurance -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Health Insurance</div>
+        <span class="badge badge-green">{{ user.health_insurance }} · Active</span>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-green" style="margin-bottom:12px">✓ &nbsp;Your {{ user.health_insurance }} coverage is active and covers you from your first day of employment.</div>
+        <div class="compact-row"><span class="compact-key">Plan</span><span class="compact-val">{{ user.health_insurance }}</span></div>
+        <div class="compact-row"><span class="compact-key">Framework</span><span class="compact-val">Dubai Health Authority (DHA)</span></div>
+        <div class="compact-row"><span class="compact-key">Coverage</span><span class="compact-val">Employee only — dependants at own cost</span></div>
+        <div class="compact-row"><span class="compact-key">During notice period</span><span class="compact-val">Active until your last working day</span></div>
+      </div>
+      <div style="padding:0 16px 14px">
+        <button class="btn-ghost" style="width:100%;justify-content:center" onclick="askAbout('What does my health insurance cover?')">Ask a question →</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

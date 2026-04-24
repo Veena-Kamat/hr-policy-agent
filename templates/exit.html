@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Exit & Resignation{% endblock %}
+{% block breadcrumb %}Exit & Resignation{% endblock %}
+
+{% block content %}
+<div class="page">
+  <div class="title-row">
+    <div>
+      <div class="page-title">Exit & Resignation</div>
+      <div class="page-sub">Notice periods, final settlement, and your entitlements on leaving Novaris Solutions</div>
+    </div>
+    <button class="btn btn-primary" onclick="askAbout('What are my rights and entitlements when I resign from Novaris Solutions?')">Ask PolicyIQ →</button>
+  </div>
+
+  <div class="alert alert-amber">⚠ &nbsp;This page covers general policy. If you are considering resignation, we recommend speaking with HR confidentially before taking any action.</div>
+
+  <!-- Notice periods -->
+  <div class="card">
+    <div class="card-hdr"><div class="card-title">Notice Periods by Band</div></div>
+    <div style="overflow:hidden">
+      <table class="data-table">
+        <thead><tr><th>Band</th><th>Role Level</th><th>Notice Period</th><th>During Probation</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-gray">Band 1</span></td><td>Analyst / Associate</td><td><strong>1 month</strong></td><td>14 calendar days</td></tr>
+          <tr><td><span class="badge badge-gray">Band 2</span></td><td>Consultant / Senior Consultant</td><td><strong>1 month</strong></td><td>14 calendar days</td></tr>
+          <tr><td><span class="badge badge-blue">Band 3</span></td><td>Manager / Senior Manager</td><td><strong>3 months</strong></td><td>14 calendar days</td></tr>
+          <tr><td><span class="badge badge-blue">Band 4</span></td><td>Director and above</td><td><strong>3 months</strong></td><td>14 calendar days</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="padding:0 16px 14px;margin-top:2px">
+      <div class="ask-bar"><span class="ask-bar-text">Not sure which band you are?</span><button class="btn-ghost" onclick="askAbout('What is my notice period and how do I find my band at Novaris?')">Ask PolicyIQ →</button></div>
+    </div>
+  </div>
+
+  <!-- Notice process -->
+  <div class="card">
+    <div class="card-hdr"><div class="card-title">Resignation Process</div></div>
+    <div class="card-body">
+      <div class="info-row"><div class="info-key">How to resign</div><div class="info-val">Submit written notice to your line manager and HR at hr@novarissolutions.ae</div></div>
+      <div class="info-row"><div class="info-key">Notice period start</div><div class="info-val">Begins the day after written notice is received by HR</div></div>
+      <div class="info-row"><div class="info-key">Annual leave during notice</div><div class="info-val">Annual leave may not ordinarily be taken during the notice period unless agreed in writing by HR</div></div>
+      <div class="info-row"><div class="info-key">Payment in lieu (PILON)</div><div class="info-val">The Company may, at its discretion, make a payment in lieu rather than require you to work out the notice period</div></div>
+      <div class="info-row"><div class="info-key">Last working day</div><div class="info-val">HR will confirm your last working day and initiate the exit process including IT access, equipment return, and final settlement</div></div>
+    </div>
+  </div>
+
+  <!-- Final settlement -->
+  <div class="card">
+    <div class="card-hdr"><div class="card-title">Final Settlement</div><span class="badge badge-green">Within 14 days of last working day</span></div>
+    <div class="card-body">
+      <div class="alert alert-green" style="margin-bottom:12px">✓ &nbsp;Under UAE Labour Law, all final entitlements must be paid within 14 calendar days of your last working day.</div>
+      <div class="info-row"><div class="info-key">Outstanding salary</div><div class="info-val">All days worked up to and including your last working day</div></div>
+      <div class="info-row"><div class="info-key">Accrued annual leave</div><div class="info-val">Any untaken leave from the current leave year, paid at your daily salary rate</div></div>
+      <div class="info-row"><div class="info-key">Air ticket allowance</div><div class="info-val">Prorated for the months served in the current year if not yet paid — subject to eligibility (1 year service)</div></div>
+      <div class="info-row"><div class="info-key">End of Service Gratuity</div><div class="info-val">Calculated on your last drawn salary — 21 days/year for first 5 years, 30 days/year beyond 5 years</div></div>
+      <div class="info-row"><div class="info-key">Excess leave taken</div><div class="info-val">If you have taken more leave than accrued, the excess will be deducted from your final payment</div></div>
+    </div>
+    <div style="padding:0 16px 14px">
+      <div class="ask-bar"><span class="ask-bar-text">Questions about your final settlement calculation?</span><button class="btn-ghost" onclick="askAbout('How is my final settlement calculated when I resign from Novaris?')">Ask PolicyIQ →</button></div>
+    </div>
+  </div>
+
+  <div class="stats-grid" style="grid-template-columns:1fr 1fr;gap:14px">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">EOSG on Resignation</div></div>
+      <div class="card-body">
+        <div class="info-row"><div class="info-key">Are you entitled?</div><div class="info-val">Yes — EOSG is not forfeited on resignation under UAE Federal Decree-Law No. 33 of 2021</div></div>
+        <div class="info-row"><div class="info-key">Minimum service</div><div class="info-val">You must have completed at least 1 year of continuous service</div></div>
+        <div class="info-row"><div class="info-key">Notice requirement</div><div class="info-val">You must serve your full notice period. EOSG may be affected if notice is not served.</div></div>
+      </div>
+      <div style="padding:0 16px 14px"><button class="btn-ghost" style="width:100%;justify-content:center" onclick="askAbout('Am I entitled to gratuity when I resign from Novaris?')">Ask a question →</button></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">Probation Period Exit</div></div>
+      <div class="card-body">
+        <div class="info-row"><div class="info-key">Notice during probation</div><div class="info-val">14 calendar days written notice — applies to both employee and company</div></div>
+        <div class="info-row"><div class="info-key">EOSG during probation</div><div class="info-val">Not applicable — minimum 1 year service required</div></div>
+        <div class="info-row"><div class="info-key">Annual leave on exit during probation</div><div class="info-val">Accrued leave is paid out, but may not be taken during the probation notice period</div></div>
+      </div>
+      <div style="padding:0 16px 14px"><button class="btn-ghost" style="width:100%;justify-content:center" onclick="askAbout('What happens if I resign during my probation period?')">Ask a question →</button></div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

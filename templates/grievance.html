@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}Raise a Grievance{% endblock %}
+{% block breadcrumb %}Raise a Grievance{% endblock %}
+
+{% block extra_styles %}
+.step-list { display: flex; flex-direction: column; gap: 0; }
+.step-item { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+.step-item:last-child { border-bottom: none; }
+.step-num { width: 32px; height: 32px; background: var(--blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+.step-title { font-size: 13px; font-weight: 600; color: var(--text-1); margin-bottom: 3px; }
+.step-desc { font-size: 12px; color: var(--text-3); line-height: 1.55; }
+.compact-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+.compact-row:last-child { border-bottom: none; }
+.compact-key { color: var(--text-2); font-weight: 500; }
+.compact-val { color: var(--text-1); text-align: right; max-width: 55%; }
+
+@media (max-width: 768px) {
+  .compact-key { min-width: auto; }
+  .compact-row { flex-direction: column; gap: 2px; }
+  .compact-val { text-align: left; max-width: 100%; }
+  .step-item { gap: 10px; }
+}
+{% endblock %}
+
+{% block content %}
+<div class="page">
+  <div class="title-row">
+    <div>
+      <div class="page-title">Raise a Grievance</div>
+      <div class="page-sub">All proceedings are strictly confidential — raising a concern in good faith is fully protected</div>
+    </div>
+    <button class="btn btn-primary" onclick="askAbout('How do I raise a formal grievance at Novaris?')">Ask PolicyIQ →</button>
+  </div>
+
+  <div class="alert alert-green">🔒 &nbsp;Retaliation against anyone who raises a grievance is itself a disciplinary matter at Novaris Solutions.</div>
+
+  <!-- Main hero: Formal Grievance Process -->
+  <div class="card">
+    <div class="card-hdr">
+      <div class="card-title">Formal Grievance Process</div>
+      <span class="badge badge-blue">6 steps</span>
+    </div>
+    <div class="card-body" style="padding:0 16px">
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div>
+            <div class="step-title">Email HR in writing</div>
+            <div class="step-desc">Send your concern to hr@novarissolutions.ae — include the nature of the issue, names of individuals involved, and the outcome you are seeking.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div>
+            <div class="step-title">Acknowledgement within 3 working days</div>
+            <div class="step-desc">HR confirms receipt and explains next steps in writing.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div>
+            <div class="step-title">Investigation (up to 15 working days)</div>
+            <div class="step-desc">An independent investigating manager interviews relevant parties and reviews documentation.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div>
+            <div class="step-title">Grievance hearing</div>
+            <div class="step-desc">You are invited to a formal hearing. You have the right to bring a colleague as a companion.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">5</div>
+          <div>
+            <div class="step-title">Written outcome within 5 working days</div>
+            <div class="step-desc">HR communicates the decision, findings, any actions to be taken, and your right to appeal.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--blue-light);color:var(--blue);border:1px solid var(--blue-mid)">↑</div>
+          <div>
+            <div class="step-title">Appeal (if needed)</div>
+            <div class="step-desc">Submit a written appeal to the HR Director within 5 working days. A senior manager not involved in the original case hears the appeal. The decision is final.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:14px 16px;border-top:1px solid var(--border)">
+      <a href="mailto:hr@novarissolutions.ae" class="btn btn-primary" style="width:100%;justify-content:center">✉ &nbsp;Email HR Confidentially</a>
+    </div>
+  </div>
+
+  <!-- Compact bottom cards -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">Your Rights</div></div>
+      <div class="card-body" style="padding:4px 14px 10px">
+        <div class="compact-row"><span class="compact-key">Confidentiality</span><span class="compact-val">Shared only with those who need to know</span></div>
+        <div class="compact-row"><span class="compact-key">Right to companion</span><span class="compact-val">Bring a colleague to any hearing</span></div>
+        <div class="compact-row"><span class="compact-key">Protection</span><span class="compact-val">Good-faith reports are fully protected</span></div>
+        <div class="compact-row"><span class="compact-key">Right to appeal</span><span class="compact-val">Within 5 working days of outcome</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">Contact HR</div></div>
+      <div class="card-body" style="padding:4px 14px 10px">
+        <div class="compact-row"><span class="compact-key">HR email</span><span class="compact-val">hr@novarissolutions.ae</span></div>
+        <div class="compact-row"><span class="compact-key">Concern involves HR?</span><span class="compact-val">Contact HR Director directly</span></div>
+        <div class="compact-row"><span class="compact-key">Not sure yet?</span><span class="compact-val">HR available for confidential chat first</span></div>
+        <div class="compact-row"><span class="compact-key">Anonymous?</span><span class="compact-val">Speak to HR Director about options</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

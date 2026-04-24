@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% block title %}Document Manager{% endblock %}
+{% block breadcrumb %}Document Manager{% endblock %}
+
+{% block extra_styles %}
+.upload-zone { border: 2px dashed var(--border-mid); border-radius: var(--r); padding: 22px; text-align: center; background: var(--bg); cursor: pointer; transition: all 0.12s; }
+.upload-zone:hover, .upload-zone.drag-over { border-color: var(--blue); background: var(--blue-light); }
+.upload-zone-icon { font-size: 28px; margin-bottom: 8px; }
+.upload-zone h4 { font-size: 13px; font-weight: 600; color: var(--text-1); margin-bottom: 3px; }
+.upload-zone p { font-size: 11px; color: var(--text-3); }
+
+.selected-file { display: none; align-items: center; gap: 8px; background: var(--blue-light); border: 1px solid var(--blue-mid); border-radius: var(--r-sm); padding: 8px 12px; font-size: 12px; }
+.selected-file.show { display: flex; }
+.sf-name { flex: 1; font-weight: 500; color: var(--blue-dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sf-clear { color: var(--blue); cursor: pointer; font-size: 14px; flex-shrink: 0; background: none; border: none; }
+
+.progress-wrap { display: none; }
+.progress-wrap.show { display: block; }
+.progress-label { font-size: 11px; color: var(--text-3); margin-bottom: 5px; }
+.progress-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--blue); border-radius: 2px; transition: width 0.3s ease; width: 0%; }
+
+.action-link { color: var(--blue); font-size: 11.5px; cursor: pointer; font-weight: 500; background: none; border: none; }
+.action-link.danger { color: var(--red); }
+.chunk-pill { background: var(--bg); border: 1px solid var(--border); color: var(--text-2); font-size: 10.5px; font-weight: 600; padding: 2px 7px; border-radius: 3px; }
+{% endblock %}
+
+{% block content %}
+<div class="page">
+  <div class="title-row">
+    <div>
+      <div class="page-title">Document Manager</div>
+      <div class="page-sub">Upload and manage policy documents that power the PolicyIQ knowledge base</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <a href="/" class="btn btn-secondary">← Employee View</a>
+    </div>
+  </div>
+
+  <!-- Status strip -->
+  <div class="alert alert-green">
+    ✓ &nbsp;Knowledge base active · {{ documents|length }} document{{ 's' if documents|length != 1 else '' }} indexed · {{ total_chunks }} text chunks · TF-IDF index healthy
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid stats-3">
+    <div class="stat-card"><div class="stat-lbl">Total Documents</div><div class="stat-val">{{ documents|length }}</div><div class="stat-sub">policy documents loaded</div></div>
+    <div class="stat-card"><div class="stat-lbl">Text Chunks Indexed</div><div class="stat-val">{{ total_chunks }}</div><div class="stat-sub">searchable passages</div></div>
+    <div class="stat-card"><div class="stat-lbl">Index Status</div><div class="stat-val" style="font-size:15px;color:var(--green);margin-top:4px">● Active</div><div class="stat-sub">TF-IDF retrieval ready</div></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:320px 1fr;gap:16px;align-items:start">
+
+    <!-- Upload panel -->
+    <div class="card" style="position:sticky;top:0">
+      <div class="card-hdr"><div class="card-title">Upload New Document</div></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
+
+        <div class="upload-zone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-zone-icon">📂</div>
+          <h4>Drop file or click to browse</h4>
+          <p>PDF · DOCX · TXT · Max 25 MB</p>
+        </div>
+        <input type="file" id="fileInput" accept=".pdf,.docx,.txt" style="display:none" onchange="onFileSelect(this)">
+
+        <div class="selected-file" id="selectedFile">
+          <span style="font-size:14px">📄</span>
+          <span class="sf-name" id="sfName"></span>
+          <button class="sf-clear" onclick="clearFile()">✕</button>
+        </div>
+
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Policy Category</label>
+          <select class="form-control" id="categorySelect">
+            {% for cat in policy_categories %}
+            <option value="{{ cat }}">{{ cat }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <button class="btn btn-primary" id="uploadBtn" onclick="uploadDoc()" style="width:100%;justify-content:center">
+          ⬆ &nbsp;Upload & Index Document
+        </button>
+
+        <div class="progress-wrap" id="progressWrap">
+          <div class="progress-label" id="progressLabel">Processing…</div>
+          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Documents table -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Indexed Documents</div>
+        <span style="font-size:11.5px;color:var(--text-3)">{{ documents|length }} document{{ 's' if documents|length != 1 else '' }}</span>
+      </div>
+
+      {% if documents %}
+      <table class="data-table" id="docsTable">
+        <thead>
+          <tr>
+            <th>Document</th>
+            <th>Category</th>
+            <th>Chunks</th>
+            <th>Indexed</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="docsBody">
+          {% for doc in documents %}
+          <tr id="row-{{ doc.id }}">
+            <td>
+              <div style="display:flex;align-items:center;gap:7px">
+                <span style="font-size:13px">📄</span>
+                <span style="font-weight:500;color:var(--text-1);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="{{ doc.original_name }}">{{ doc.original_name }}</span>
+              </div>
+            </td>
+            <td>
+              {% if 'Handbook' in doc.category %}<span class="badge badge-blue">{{ doc.category }}</span>
+              {% elif 'Leave' in doc.category %}<span class="badge badge-green">{{ doc.category }}</span>
+              {% elif 'Working' in doc.category %}<span class="badge badge-teal">{{ doc.category }}</span>
+              {% elif 'Benefits' in doc.category %}<span class="badge badge-purple">{{ doc.category }}</span>
+              {% elif 'Conduct' in doc.category %}<span class="badge badge-amber">{{ doc.category }}</span>
+              {% elif 'Grievance' in doc.category %}<span class="badge badge-red">{{ doc.category }}</span>
+              {% else %}<span class="badge badge-gray">{{ doc.category }}</span>
+              {% endif %}
+            </td>
+            <td><span class="chunk-pill">{{ doc.chunk_count }}</span></td>
+            <td style="color:var(--text-3)">{{ doc.upload_date }}</td>
+            <td><span class="badge badge-green">● Active</span></td>
+            <td style="display:flex;gap:10px;align-items:center">
+              <a href="/download-by-id/{{ doc.id }}" class="action-link" title="Download">⬇ Download</a>
+              <form method="POST" action="/admin/delete/{{ doc.id }}" style="display:inline"
+                onsubmit="return confirm('Remove this document from the knowledge base?')">
+                <button type="submit" class="action-link danger">Remove</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div style="padding:40px 24px;text-align:center">
+        <div style="font-size:32px;margin-bottom:12px;opacity:0.4">📭</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text-1);margin-bottom:6px">No documents yet</div>
+        <div style="font-size:12px;color:var(--text-3)">Upload your first policy document to activate the knowledge base.</div>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let selectedFile = null;
+const dropzone = document.getElementById('dropzone');
+
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('drag-over'); if(e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]); });
+
+function onFileSelect(input) { if(input.files[0]) setFile(input.files[0]); }
+
+function setFile(file) {
+  selectedFile = file;
+  document.getElementById('sfName').textContent = file.name;
+  document.getElementById('selectedFile').classList.add('show');
+  dropzone.style.display = 'none';
+}
+
+function clearFile() {
+  selectedFile = null;
+  document.getElementById('fileInput').value = '';
+  document.getElementById('selectedFile').classList.remove('show');
+  dropzone.style.display = '';
+}
+
+function animateProgress(from, to, duration) {
+  const start = Date.now();
+  const fill = document.getElementById('progressFill');
+  function step() {
+    const pct = Math.min(from + (to-from)*((Date.now()-start)/duration), to);
+    fill.style.width = pct + '%';
+    if(pct < to) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+async function uploadDoc() {
+  if(!selectedFile) { showToast('Please select a file first.', true); return; }
+  const btn = document.getElementById('uploadBtn');
+  const progressWrap = document.getElementById('progressWrap');
+  const progressLabel = document.getElementById('progressLabel');
+
+  btn.disabled = true; btn.textContent = 'Uploading…';
+  progressWrap.classList.add('show');
+  progressLabel.textContent = 'Uploading and extracting text…';
+  animateProgress(0, 40, 700);
+
+  const form = new FormData();
+  form.append('file', selectedFile);
+  form.append('category', document.getElementById('categorySelect').value);
+
+  try {
+    const res = await fetch('/admin/upload', { method: 'POST', body: form });
+    const data = await res.json();
+    if(data.error) {
+      showToast(data.error, true);
+      progressWrap.classList.remove('show');
+    } else {
+      animateProgress(40, 80, 400);
+      progressLabel.textContent = `Indexing ${data.chunks} chunks…`;
+      await new Promise(r => setTimeout(r, 600));
+      animateProgress(80, 100, 300);
+      progressLabel.textContent = 'Done — knowledge base updated.';
+      showToast(`✓ "${data.filename}" indexed (${data.chunks} chunks)`);
+      await new Promise(r => setTimeout(r, 800));
+      window.location.reload();
+    }
+  } catch(e) {
+    showToast('Upload failed. Please try again.', true);
+    progressWrap.classList.remove('show');
+  }
+  btn.disabled = false; btn.textContent = '⬆ Upload & Index Document';
+}
+</script>
+{% endblock %}

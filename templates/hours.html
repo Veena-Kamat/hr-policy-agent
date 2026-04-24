@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Working Hours{% endblock %}
+{% block breadcrumb %}Working Hours{% endblock %}
+
+{% block extra_styles %}
+.compact-row { display: flex; align-items: flex-start; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 12px; gap: 16px; }
+.compact-row:last-child { border-bottom: none; }
+.compact-key { color: var(--text-2); font-weight: 500; flex-shrink: 0; width: 180px; }
+.compact-val { color: var(--text-1); text-align: right; }
+
+@media (max-width: 768px) {
+  .compact-key { width: auto; }
+  .compact-row { flex-direction: column; gap: 2px; }
+  .compact-val { text-align: left; }
+}
+{% endblock %}
+
+{% block content %}
+<div class="page">
+  <div class="title-row">
+    <div>
+      <div class="page-title">Working Hours</div>
+      <div class="page-sub">{{ user.name }} · Flexitime · Dubai, UAE</div>
+    </div>
+    <button class="btn btn-primary" onclick="askAbout('What are my working hours and WFH entitlement?')">Ask PolicyIQ →</button>
+  </div>
+
+  <!-- Top stat cards — keep these -->
+  <div class="stats-grid stats-3">
+    <div class="stat-card">
+      <div class="stat-lbl">Hours Per Day</div>
+      <div class="stat-val">8</div>
+      <div class="stat-sub">Mon – Fri, excluding lunch</div>
+      <div class="stat-pill pill-green">● 40 hrs / week</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-lbl">Flexitime Window</div>
+      <div class="stat-val" style="font-size:18px;margin-top:4px">7 AM – 9 PM</div>
+      <div class="stat-sub">choose your own start & finish</div>
+      <div class="stat-pill pill-blue">⊙ Results-oriented</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-lbl">Core Hours</div>
+      <div class="stat-val" style="font-size:18px;margin-top:4px">10 AM – 4 PM</div>
+      <div class="stat-sub">mandatory availability — every day</div>
+      <div class="stat-pill pill-amber">⚠ Required daily</div>
+    </div>
+  </div>
+
+  <!-- WFH entitlement — prominent -->
+  <div class="card">
+    <div class="card-hdr">
+      <div class="card-title">Work From Home</div>
+      <span class="badge badge-blue">{{ user.wfh_days_this_month }} of {{ user.wfh_limit_per_month }} days used this month</span>
+    </div>
+    <div class="card-body">
+      <div class="alert alert-blue" style="margin-bottom:12px">
+        You have <strong>{{ user.wfh_limit_per_month - user.wfh_days_this_month }} standard WFH days</strong> remaining this month. Need more? Request additional days from your manager — there's no hard cap beyond the standard 4.
+      </div>
+      <div class="compact-row"><span class="compact-key">Standard entitlement</span><span class="compact-val">4 days per calendar month</span></div>
+      <div class="compact-row"><span class="compact-key">Beyond 4 days</span><span class="compact-val">Manager discretion — no fixed cap</span></div>
+      <div class="compact-row"><span class="compact-key">Client site days</span><span class="compact-val">Take priority over WFH — may be required at short notice</span></div>
+      <div class="compact-row"><span class="compact-key">Core hours</span><span class="compact-val">Apply regardless of location</span></div>
+    </div>
+    <div style="padding:0 16px 14px">
+      <button class="btn-ghost" onclick="askAbout('How many WFH days do I have left this month?')">Ask PolicyIQ →</button>
+    </div>
+  </div>
+
+  <!-- Compact info -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">Overtime & Public Holidays</div></div>
+      <div class="card-body" style="padding:4px 14px 10px">
+        <div class="compact-row"><span class="compact-key">Overtime pay</span><span class="compact-val">Not applicable — all bands salaried exempt</span></div>
+        <div class="compact-row"><span class="compact-key">Working on public holiday</span><span class="compact-val">TOIL granted — take within 30 days</span></div>
+        <div class="compact-row"><span class="compact-key">Sustained overworking</span><span class="compact-val">Raise with your manager — it's a workload issue</span></div>
+      </div>
+      <div style="padding:0 14px 12px">
+        <button class="btn-ghost" onclick="askAbout('Do I get paid if I work on a public holiday?')">Ask a question →</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">Ramadan Hours</div><span class="badge badge-amber">Adjusted annually</span></div>
+      <div class="card-body" style="padding:4px 14px 10px">
+        <div class="compact-row"><span class="compact-key">Working hours</span><span class="compact-val">Reduced to 6 hours / day for all employees</span></div>
+        <div class="compact-row"><span class="compact-key">Adjusted core hours</span><span class="compact-val">Communicated by HR before Ramadan starts</span></div>
+      </div>
+      <div style="padding:0 14px 12px">
+        <button class="btn-ghost" onclick="askAbout('What are the working hours during Ramadan?')">Ask a question →</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
